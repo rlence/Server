@@ -36,5 +36,21 @@ const comparacion = (req, res, userName, email) =>
               return true;
 };
 
+const comparacionLogIn = (req, res, userName, email, password) => 
+{
+        const data = readData();
 
-module.exports = {comparacion, verificandoIngresoDeDatos };
+        const user = data.users.find(user => user.userName.toLowerCase() === userName.toLowerCase());
+
+        if(!(user) 
+           || !(user.email.toLowerCase() === email.toLowerCase())
+           || !(user.password === password))
+           {
+                   return res.status(400).json({message: 'El nombre de usuario o email o password son inconrrectos'});
+           }else{
+                   return res.status(200).json({message:'Acceso conseguido', user});
+           }
+};
+
+
+module.exports = {comparacion, verificandoIngresoDeDatos, comparacionLogIn };
