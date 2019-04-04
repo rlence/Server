@@ -17,4 +17,4 @@ app.use(require('./route')); //exportando todas las rutas principales
 //servidor escuchando
 app.listen(PORT, ()=> {
        console.log(`Server listening at ${PORT}` );
-});
+});                                                                          
