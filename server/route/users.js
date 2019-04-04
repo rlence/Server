@@ -12,7 +12,7 @@ route.post('/singUp', (req, res)=>
               res.send(user)     
        }).catch( err => {//si algo va mal enviamos un error
               
-              res.status(400).send('el usuario o email ya existen')
+              res.status(400).send(err.message)
        })
        
 });

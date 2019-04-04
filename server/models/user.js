@@ -1,8 +1,15 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 const bcrypt = require('bcrypt');
+const validate = require('mongoose-validator');
 
 //nos traemos todas las librerias que vamos a usar
+
+const emailValidate = validate({
+       validator: 'isEmail',
+       message:'no es un email'
+});
+
 
 const UserSchema = new mongoose.Schema({ 
 //para configurar los requirimientos para el registro de usuario
@@ -22,13 +29,15 @@ const UserSchema = new mongoose.Schema({
               required:true,
               unique:true,
               maxlength:100,
-              trim:true
+              trim:true,
+              validate: emailValidate
        },
        password:
        {
               type:String,
               required:true,
-              trim:true
+              trim:true,
+              minlength:8
        }
 },{
        strict: true 
@@ -42,6 +51,7 @@ UserSchema.methods.toJSON = function(){
        return _.pick(user, ['_id', 'username', 'email']);
        //solo retornamos como respuesta el id del usuario, nombre y el email
 };
+
 
 UserSchema.pre('save', function(next)
 {//funcion que me permete modificar algo antes de ser guardado en la base de datos
