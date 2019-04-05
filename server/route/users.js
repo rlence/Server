@@ -17,18 +17,22 @@ route.post('/singUp', (req, res)=>
        
 });
 
-route.post('/logIn', (req, res) => {
+route.post('/logIn', async (req, res) => {
 
        const { username, email, password} = req.body;
 
-       User.findOne({ email, password})
-       .then( user => {
-              if(!(user)){
-                     return res.status(400).send('Usuario Invalido');
-              }else{
-                     return res.send(user)
-              }
-       }).catch(err => { res.status(500).send(err)})
+     if(!email || !password)
+     {
+            return res.status(400).send('Datos invalidos, relleno el campo');
+     }
+     const user =  await User.findByCredentials(req.body);
+
+     if(!user){
+            return res.status(401).send({message: "Invalid Credencial"});
+     }
+
+     const token = await user.createLogInToken();
+     res.header('Authorization', token).send(user);
 });
 
 

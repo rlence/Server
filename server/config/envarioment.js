@@ -12,11 +12,13 @@ const config = //configuracion inicial
 {
        [envarioments.development]: 
        {
-              PORT:8080 //indicando el puerto del ambiente desarrollador
+              PORT:8080, //indicando el puerto del ambiente desarrollador
+              JTW_SECRET: 'woihgwfhfqgqegeqgeg'
        },
        [envarioments.production]:
        {
-              PORT:80 //indicando el puerto del ambiente de produccion
+              PORT:80, //indicando el puerto del ambiente de produccion
+              JTW_SECRET: 'woihgwfhfqgqegeqgeg'
        }
 }
 

@@ -1,15 +1,10 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 const bcrypt = require('bcrypt');
-const validate = require('mongoose-validator');
+const validate = require('validator');
+const jwt = require('jsonwebtoken');
 
 //nos traemos todas las librerias que vamos a usar
-
-const emailValidate = validate({
-       validator: 'isEmail',
-       message:'no es un email'
-});
-
 
 const UserSchema = new mongoose.Schema({ 
 //para configurar los requirimientos para el registro de usuario
@@ -30,19 +25,67 @@ const UserSchema = new mongoose.Schema({
               unique:true,
               maxlength:100,
               trim:true,
-              validate: emailValidate
+              validate:{
+                     isAsync: true,
+                     validator: (email)=> { return validate.isEmail(email, {
+                         domain_specific_validator:true   
+                     })}
+              },
+              message: (props) => `Email ${props.value} is no valid.`
        },
        password:
        {
               type:String,
               required:true,
               trim:true,
-              minlength:8
-       }
+              minlength:8,
+              validate:{
+                     isAsync:true,
+                     validator: (password)=>{
+                            if( password.match(/[A-Z]+/)&&
+                                password.match(/[a-z]+/)&&
+                                password.match(/[0-9]+/)&&
+                                password.match(/\W+/)
+                            ){
+                                   return true;
+                            }else{
+                                   return false;
+                            }
+                     }
+              }
+       },
+       tokens: [{
+              token:{
+                     type:String,
+                     required:true
+              },
+              type:{
+                     type:String,
+                     required:true
+              }
+       }]
 },{
        strict: true 
        //indicamos que sea estrictamento lo que hemos especificado
 });
+
+UserSchema.methods.createLogInToken = function(){
+       const user = this;
+
+       const token = jwt.sign({
+              _id: user._id
+       }, process.env.JTW_SECRET);
+
+       user.tokens.push({
+              token,
+              type: 'logIn'
+       });
+
+       return user.save()
+       .then( user => {
+              return token;
+       });
+};
 
 UserSchema.methods.toJSON = function(){
        const user = this; 
@@ -50,6 +93,21 @@ UserSchema.methods.toJSON = function(){
 
        return _.pick(user, ['_id', 'username', 'email']);
        //solo retornamos como respuesta el id del usuario, nombre y el email
+};
+
+UserSchema.statics.findByCredentials = async ({email, password})=>
+{
+      const user = await User.findOne({email})
+
+      if(user){
+             const verifiendPass = await bcrypt.compare(password, user.password);
+
+             if(verifiendPass){
+                    return user;
+             }
+      }
+
+      return null;
 };
 
 
