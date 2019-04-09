@@ -1,7 +1,9 @@
 const route = require('express').Router();
+const _ = require('lodash');
 
 //importando funcionalidades
 const User = require('../models/user');
+const { autorization, isAdmin} = require('../middelware/autorization');
 
 //sub-rutas de user
 route.post('/singUp', (req, res)=>
@@ -33,6 +35,22 @@ route.post('/logIn', async (req, res) => {
 
      const token = await user.createLogInToken();
      res.header('Authorization', token).send(user);
+});
+
+route.get('/me', autorization, (req, res)=>{
+       res.send(req.user)
+});
+
+route.patch('/me', autorization, async (req, res)=>{
+       try{
+              req.body = _.pick(req.body, ['username', 'email'])
+
+              await req.user.update(req.body)
+
+              res.send(await User.findById(req.user));
+       }catch(err){
+              res.status(400).send(err.message);
+       }
 });
 
 

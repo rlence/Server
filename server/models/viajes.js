@@ -17,15 +17,18 @@ const TravelSchema = new mongoose.Schema({
        descripccion:{
               type:String,
               required:true,
-              trim: true
+              trim: true,
+              minlength:5,
+              maxlength:50
        },
        precio:{
               type: String,
               required: true,
-              trim: true
+              default:0
        },
        estado:{
-              active: false
+              type: Boolean,
+              default: false
        }
 });
 
