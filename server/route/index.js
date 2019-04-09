@@ -9,4 +9,6 @@ route.get('/', (req, res)=> {
 
 route.use('/user', require('./users'));
 
+route.use('/viaje', require('./viaje'));
+
 module.exports = route;
