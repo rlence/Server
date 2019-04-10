@@ -3,7 +3,7 @@ const User = require('../models/user');
 
 const autorization = async (req, res, next) => {
        const token = req.headers['authorization'];
-
+       
        try{
               const data = jwt.verify(token, process.env.JTW_SECRET)
               const user = await User.findOne({
@@ -19,15 +19,19 @@ const autorization = async (req, res, next) => {
               req.user = user;
               next();
        }catch(err){
-
-              const data = jwt.verify(token, process.env.JTW_SECRET)
-              await User.findOneAndRemove({
-                     _id:data._id,
-                     'tokens.token':token,
-                     'tokens.type':'logIn'
-              });
               
-              return res.status(401).send(err.message || err);
+              res.status(401).send(err.message || err);
+
+              const decoded = jwt.decode(token);
+              await User.findOneAndUpdate(
+                     { _id: decoded._id },
+                     {$pull: {
+                         tokens: {
+                           token: token, 
+                           type: 'logIn'
+                         }
+                       }
+                     });
        }
 };
 
