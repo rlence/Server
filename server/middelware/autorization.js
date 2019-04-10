@@ -19,6 +19,14 @@ const autorization = async (req, res, next) => {
               req.user = user;
               next();
        }catch(err){
+
+              const data = jwt.verify(token, process.env.JTW_SECRET)
+              await User.findOneAndRemove({
+                     _id:data._id,
+                     'tokens.token':token,
+                     'tokens.type':'logIn'
+              });
+              
               return res.status(401).send(err.message || err);
        }
 };

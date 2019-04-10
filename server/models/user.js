@@ -73,7 +73,9 @@ UserSchema.methods.createLogInToken = function(){
        const user = this;
 
        const token = jwt.sign({
-              _id: user._id
+              _id: user._id,
+              iat:Date.now()/1000,
+              exp:Date.now/1000 + 60*60*22 
        }, process.env.JTW_SECRET);
 
        user.tokens.push({
