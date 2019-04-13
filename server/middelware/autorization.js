@@ -19,7 +19,7 @@ const autorization = async (req, res, next) => {
               req.user = user;
               next();
        }catch(err){
-              
+              //eliminando token              
               res.status(401).send(err.message || err);
 
               const decoded = jwt.decode(token);
