@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
+const url = 'localhost://8080/public/uploads'
 
 const TravelSchema = new mongoose.Schema({
 
@@ -14,7 +15,7 @@ const TravelSchema = new mongoose.Schema({
               required: true,
               trim: true
        },
-       descripccion:{
+       descripcion:{
               type:String,
               required:true,
               trim: true,
@@ -29,15 +30,21 @@ const TravelSchema = new mongoose.Schema({
        estado:{
               type: Boolean,
               default: false
+       },
+       imagen: {
+              type: String,
+              set: function(value){
+                     return `${url}/${value}`
+              }
        }
 });
 
 TravelSchema.methods.toJSON = function(){
        const travel = this;
 
-       return _.pick(travel, ['_id','viaje','fecha','descripccion','precio']);
+       return _.pick(travel, ['_id','viaje','fecha','descripccion','precio','estado','imagen']);
 };
 
-const Travel = mongoose.model('viaje', TravelSchema);
+const Travel = mongoose.model('travel', TravelSchema);
 
 module.exports = Travel;

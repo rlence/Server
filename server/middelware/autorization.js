@@ -24,7 +24,8 @@ const autorization = async (req, res, next) => {
 
               const decoded = jwt.decode(token);
               await User.findOneAndUpdate(
-                     { _id: decoded._id },
+                     { _id: decoded._id,
+                     'tokens.token':token },
                      {$pull: {
                          tokens: {
                            token: token, 

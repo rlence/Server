@@ -6,7 +6,7 @@ const User = require('../models/user');
 const { autorization, isAdmin} = require('../middelware/autorization');
 
 //sub-rutas de user
-route.post('/singUp', (req, res)=>
+route.post('/singUp', (req, res)=>//ruta publica
 {
        new User(req.body).save()//creando un nuevo usuario y lo guardamos, devuelve promesa
        .then(user => {//si todo va bien responde con el usuario, config en models user
@@ -19,7 +19,7 @@ route.post('/singUp', (req, res)=>
        
 });
 
-route.post('/logIn', async (req, res) => {
+route.post('/logIn', async (req, res) => {//ruta publica
 
        const { username, email, password} = req.body;
 
@@ -37,11 +37,11 @@ route.post('/logIn', async (req, res) => {
      res.header('Authorization', token).send(user);
 });
 
-route.get('/me', autorization, (req, res)=>{
+route.get('/me', autorization, (req, res)=>{//privada
        res.send(req.user)
 });
 
-route.patch('/me', autorization, async (req, res)=>{
+route.patch('/me', autorization, async (req, res)=>{ //privada
        try{
               req.body = _.pick(req.body, ['username', 'email'])
 
