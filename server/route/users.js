@@ -6,7 +6,7 @@ const User = require('../models/user');
 const { autorization, isAdmin} = require('../middelware/autorization');
 
 //sub-rutas de user
-route.post('/singUp', (req, res)=>//ruta publica
+route.post('/register', (req, res)=>//ruta publica
 {
        new User(req.body).save()//creando un nuevo usuario y lo guardamos, devuelve promesa
        .then(user => {//si todo va bien responde con el usuario, config en models user
@@ -15,6 +15,7 @@ route.post('/singUp', (req, res)=>//ruta publica
        }).catch( err => {//si algo va mal enviamos un error
               
               res.status(400).send(err.message)
+              
        })
        
 });

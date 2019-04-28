@@ -3,12 +3,15 @@ const express = require('express');
 const app = express();
 const hbs = require('hbs');
 //para handlebars
-
+const cors = require('cors');
 
 //puerto
 const PORT = process.env.PORT || 3000;
 
 //middleware
+app.use(cors( {
+       exposedHeaders: [ 'Authorization' ]
+} ));
 app.use(express.json());
 
 //motor de renderizado para hbs
